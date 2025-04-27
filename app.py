@@ -555,7 +555,7 @@ def get_pending_orders():
 #dasbboard module
 DB_NAME = "goldmetric.db"
 API_URL = "https://www.goldapi.io/api/XAU/INR"
-API_KEY = "" #goldapi-1f5iujsm87i5bf0-io ---->use this api
+API_KEY = "goldapi-1f5iujsm87i5bf0-io" #goldapi-1f5iujsm87i5bf0-io ---->use this api
 
 @app.route("/api/goldrate", methods=["GET"])
 def get_gold_rate():
@@ -611,7 +611,7 @@ def fetch_and_store_gold_rate():
         print("Error fetching gold rate:", e)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(fetch_and_store_gold_rate, CronTrigger(hour=10, minute=00))
+scheduler.add_job(fetch_and_store_gold_rate, CronTrigger(hour=8, minute=00))
 scheduler.start()
 
 @app.route("/api/gold_fluctuation", methods=["GET"])
