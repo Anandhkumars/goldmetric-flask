@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background: linear-gradient(to right, #ffa726, #fb8c00);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(to right, #fb8c00, #ef6c00);
+    }
+
+    .container {
+      text-align: center;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 440px;
+      height: 90%;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    input:invalid {
+      border-color: red;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background: linear-gradient(to right, #ffa726, #fb8c00);
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+      
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #fb8c00, #ef6c00);
+    }
+    #message {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-button" onclick="goBack()">&#x2B05; Back</button>
+
+  <div class="container">
+      <h1>Purity Calculation</h1>
+      <form id="purityForm">
+          <div class="form-group">
+              <label for="mobile">Mobile Number:</label>
+              <input type="number" id="mobile" name="mobile" placeholder="Enter a mobile no" required>
+          </div>
+          <div class="form-group">
+              <label for="party_gold1">Party gold 1</label>
+              <input type="number" id="party_gold1" name="party_gold1" step="0.01" placeholder="Enter value for Party gold 1" required>
+          </div>
+          <div class="form-group">
+              <label for="party_gold2">Party gold 2</label>
+              <input type="number" id="party_gold2" name="party_gold2" step="0.01" placeholder="Enter value for Party gold 2" required>
+          </div>
+          <div class="form-group">
+              <label for="pure_gold1">Pure gold 1</label>
+              <input type="number" id="pure_gold1" name="pure_gold1" step="0.01" placeholder="Enter value for Pure gold 1" required>
+          </div>
+          <div class="form-group">
+              <label for="pure_gold2">Pure gold 2</label>
+              <input type="number" id="pure_gold2" name="pure_gold2" step="0.01" placeholder="Enter value for Pure gold 2" required>
+          </div>
+          <div class="form-group">
+              <label for="result1">Result 1</label>
+              <input type="number" id="result1" name="result1" step="0.01" placeholder="Enter value for Result 1" required>
+          </div>
+          <div class="form-group">
+              <label for="result2">Result 2</label>
+              <input type="number" id="result2" name="result2" step="0.01" placeholder="Enter value for Result 2" required>
+          </div>
+          <div class="form-group">
+              <label for="added_pure_weight">Added pure weight</label>
+              <input type="number" id="added_pure_weight" name="added_pure_weight" step="0.01" placeholder="Enter value for Added pure weight" required>
+          </div>
+          <button type="button" id="calculateBtn">Calculate</button>
+      </form>
+      <p id="message"></p>
+  </div>
+
+  <script>
+      function goBack() {
+           window.history.back();
+          setTimeout(() => {
+             location.reload(true);
+          }, 100);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+          const urlParams = new URLSearchParams(window.location.search);
+          const mobile = urlParams.get("mobile");
+
+          console.log("Mobile Number:", mobile); 
+
+          if (mobile) {
+              document.getElementById("mobile").value = mobile;
+          }
+      });
+
+      document.getElementById("calculateBtn").addEventListener("click", function () {
+          calculatePurity();
+      });
+
+      function calculatePurity() {
+          let mobile = document.getElementById("mobile").value.trim();
+          let party_gold1 = parseFloat(document.getElementById("party_gold1").value) || 0;
+          let party_gold2 = parseFloat(document.getElementById("party_gold2").value) || 0;
+          let pure_gold1 = parseFloat(document.getElementById("pure_gold1").value) || 0;
+          let pure_gold2 = parseFloat(document.getElementById("pure_gold2").value) || 0;
+          let result1 = parseFloat(document.getElementById("result1").value) || 0;
+          let result2 = parseFloat(document.getElementById("result2").value) || 0;
+          let added_pure_weight = parseFloat(document.getElementById("added_pure_weight").value) || 0;
+
+          if (!mobile) {
+              alert("Please enter a valid mobile number.");
+              return;
+          }
+
+          let formData = {
+              mobile: mobile,
+              party_gold1: party_gold1,
+              party_gold2: party_gold2,
+              pure_gold1: pure_gold1,
+              pure_gold2: pure_gold2,
+              result1: result1,
+              result2: result2,
+              added_pure_weight: added_pure_weight
+          };
+
+          fetch("http://127.0.0.1:5000/calculate", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(formData)
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  alert(`Calculation stored successfully! Amount: ₹${data.amount}`);
+                  localStorage.setItem("goldPurityData", JSON.stringify(data));
+                  window.location.href = "/gold_purity_dtls";
+              } else {
+                  alert("Error: " + data.error);
+              }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+              alert("An error occurred while processing the request.");
+          });
+      }
+  </script>
+
+</body>
+
+</html>

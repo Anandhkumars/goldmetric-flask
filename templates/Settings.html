@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Dashboard - Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/Settings.css') }}">
+</head>
+<body>
+    <section class="header">
+        <div class="logo">
+            <i class="ri-menu-line icon menu"></i>
+            <h2><span>GoldMetric</span></h2>
+        </div>
+        <div class="user-info">
+            <span id="greeting-message"></span>
+            <span id="current-time"></span>
+        </div>
+    </section>
+
+    <section class="main">
+        <div class="sidebar">
+            <ul class="sidebar--items">
+                <li>
+                    <a href="{{ url_for('dashboard_page') }}">
+                        <span class="icon icon-1"><i class="ri-dashboard-fill"></i></span>
+                        <span class="sidebar--item">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('purity_calc') }}">
+                        <span class="icon icon-2"><i class="ri-calendar-2-line"></i></span>
+                        <span class="sidebar--item">Calculation</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('pending_payments') }}">
+                        <span class="icon icon-3"><i class="ri-user-2-line"></i></span>
+                        <span class="sidebar--item" style="white-space: nowrap;">Pending Payment</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('customer_history') }}">
+                        <span class="icon icon-4"><i class="ri-user-line"></i></span>
+                        <span class="sidebar--item">Customer</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('weekly_overview') }}">
+                        <span class="icon icon-5"><i class="ri-line-chart-line"></i></span>
+                        <span class="sidebar--item">Weekly Overview</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('settings') }}" id="active--link">
+                        <span class="icon icon-7"><i class="ri-settings-3-line"></i></span>
+                        <span class="sidebar--item">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            {% if session.username %}
+            <ul class="sidebar--bottom-items">
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span class="icon icon-8"><i class="ri-logout-box-r-line"></i></span>
+                        <span class="sidebar--item">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        {% else %}
+            <a href="{{ url_for('login_page') }}">Login</a>
+        {% endif %}
+        
+            
+        </div>
+        <div class="main-content">
+            <div class="container">
+                <h1>Admin Settings</h1>
+
+                <div class="setting-option">
+                    <label>Username:</label>
+                    <input type="text" id="usernameInput" placeholder="Enter new username">
+                </div>
+                <div class="setting-option">
+                    <label>Email:</label>
+                    <input type="email" id="emailInput" placeholder="Enter new email">
+                </div>
+                <div class="setting-option">
+                    <label>Phone:</label>
+                    <input type="tel" id="phoneInput" placeholder="Enter phone number">
+                </div>
+
+                <div class="setting-option">
+                    <label>Gold Price (Per Gram):</label>
+                    <input type="number" id="goldPriceInput" placeholder="Enter gold price">
+                </div>
+
+                <div class="setting-option">
+                    <label>New Password:</label>
+                    <input type="password" id="newPasswordInput" placeholder="Enter new password">
+                </div>
+                <div class="setting-option">
+                    <label>Confirm Password:</label>
+                    <input type="password" id="confirmPasswordInput" placeholder="Confirm new password">
+                </div>
+
+                <div class="setting-buttons">
+                    <button onclick="saveSettings()">Save Settings</button>
+                </div>
+
+                <div id="confirmationMessage" class="confirmation-message"></div>
+                <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='Scripts/settings.js') }}"></script>
+    <script>
+       function saveSettings() {
+    const name = document.getElementById("usernameInput").value.trim();
+    const phone = document.getElementById("phoneInput").value.trim();
+    const email = document.getElementById("emailInput").value.trim();
+    const goldPrice = document.getElementById("goldPriceInput").value.trim();
+    const newPassword = document.getElementById("newPasswordInput").value;
+    const confirmPassword = document.getElementById("confirmPasswordInput").value;
+
+    if (newPassword && newPassword !== confirmPassword) {
+        showError("Passwords do not match!");
+        return;
+    }
+
+    let updatedSettings = {};
+    if (name) updatedSettings.name = name;
+    if (phone) updatedSettings.phone = phone;
+    if (email) updatedSettings.email = email;
+    if (goldPrice) updatedSettings.goldPrice = goldPrice;
+    if (newPassword) updatedSettings.newPassword = newPassword;
+
+    if (Object.keys(updatedSettings).length === 0) {
+        showError("No changes detected!");
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/update-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSettings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            showSuccess(data.message);
+        } else {
+            showError("Failed to update settings.");
+        }
+    })
+    .catch(error => showError("Error updating settings!"));
+}
+
+function showSuccess(message) {
+    const msg = document.getElementById("confirmationMessage");
+    msg.textContent = message;
+    msg.style.display = "block";
+    msg.style.color = "green";
+    setTimeout(() => msg.style.display = "none", 3000);
+}
+
+function showError(message) {
+    const msg = document.getElementById("errorMessage");
+    msg.textContent = message;
+    msg.style.display = "block";
+    msg.style.color = "red";
+    setTimeout(() => msg.style.display = "none", 3000);
+}
+
+    </script>
+</body>
+</html>

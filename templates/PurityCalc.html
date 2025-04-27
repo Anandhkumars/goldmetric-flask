@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Calculation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/PurityCalc.css') }}">
+</head>
+<body>
+    <section class="header">
+        <div class="logo">
+            <i class="ri-menu-line icon icon-0 menu"></i>
+            <h2><span>GoldMetric</span></h2>
+        </div>
+        <div class="user-info">
+            <span id="current-time"></span>
+        </div>
+    </section>
+    <section class="main">
+        <div class="sidebar">
+            <ul class="sidebar--items">
+                <li>
+                    <a href="{{ url_for('dashboard_page') }}">
+                        <span class="icon icon-1"><i class="ri-dashboard-fill"></i></span>
+                        <span class="sidebar--item">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('purity_calc') }}" id="active--link">
+                        <span class="icon icon-2"><i class="ri-calendar-2-line"></i></span>
+                        <span class="sidebar--item">Calculation</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('pending_payments') }}">
+                        <span class="icon icon-3"><i class="ri-user-2-line"></i></span>
+                        <span class="sidebar--item" style="white-space: nowrap;">Pending Payment</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('customer_history') }}">
+                        <span class="icon icon-4"><i class="ri-user-line"></i></span>
+                        <span class="sidebar--item">Customer</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('weekly_overview') }}">
+                        <span class="icon icon-5"><i class="ri-line-chart-line"></i></span>
+                        <span class="sidebar--item">Weekly Overview</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('settings') }}">
+                        <span class="icon icon-7"><i class="ri-settings-3-line"></i></span>
+                        <span class="sidebar--item">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            {% if session.username %}
+            <ul class="sidebar--bottom-items">
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span class="icon icon-8"><i class="ri-logout-box-r-line"></i></span>
+                        <span class="sidebar--item">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        {% else %}
+            <a href="{{ url_for('login_page') }}">Login</a>
+        {% endif %}
+        
+            
+        </div>
+        <div id="Main" class="main-content">
+            <div class="container">
+                <h1>Purity Calculation</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Mobile No</th>
+                        <th>Gold Weight</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table">
+                </tbody>
+            </table>
+
+
+               <div id="input-form" class="hidden">
+                   <input type="text" id="name" placeholder="Enter Name">
+                   <input type="text" id="mobile" placeholder="Enter Mobile No">
+                   <input type="number" id="gold_weight" placeholder="Enter Gold Weight">
+                   <button id="save-button" class="save-button">Save</button> 
+                </div>
+
+            <div class="add-button-container">
+                <button class="add-button">Add New Data</button>
+            </div>
+            </div>
+        </div>
+    </section>
+    <script src="{{ url_for('static', filename='Scripts/PendingPayments.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const saveButton = document.getElementById("save-button");
+    const tableBody = document.getElementById("data-table");
+    const addButton = document.querySelector(".add-button");
+    const inputForm = document.getElementById("input-form");
+
+    addButton?.addEventListener("click", function () {
+        inputForm.classList.remove("hidden");
+    });
+
+    function loadPendingData() {
+        fetch("http://127.0.0.1:5000/get_pending_data")
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    tableBody.innerHTML = "";
+                    data.data.forEach(item => {
+                        let row = `<tr>
+                            <td>${item.name}</td>
+                            <td>${item.mobile}</td>
+                            <td>${item.gold_weight} g</td>
+                            <td>
+                            <button class="calculate-btn" data-id="${item.id}" data-mobile="${item.mobile}">Calculate</button>
+                        </td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                    document.querySelectorAll(".calculate-btn").forEach(button => {
+    button.addEventListener("click", function () {
+        const recordId = this.getAttribute("data-id");
+        const mobileNumber = this.getAttribute("data-mobile");
+
+        if (recordId && mobileNumber) {
+            window.location.href = `/calculation?id=${recordId}&mobile=${mobileNumber}`;
+        } else {
+            alert("Missing ID or Mobile Number!");
+        }
+    });
+});
+                } else {
+                    console.error("Error fetching pending data:", data.message);
+                }
+            })
+            .catch(error => console.error("Error loading data:", error));
+    }
+
+    saveButton?.addEventListener("click", function () {
+        let name = document.getElementById("name").value.trim();
+        let mobile = document.getElementById("mobile").value.trim();
+        let gold_weight = document.getElementById("gold_weight").value.trim();
+
+        if (!name || !mobile || !gold_weight) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        fetch("http://127.0.0.1:5000/store_data", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, mobile, gold_weight })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Data stored successfully!");
+                document.getElementById("name").value = "";
+                document.getElementById("mobile").value = "";
+                document.getElementById("gold_weight").value = "";
+                inputForm.classList.add("hidden");
+                loadPendingData(); 
+            } else {
+                alert("Failed to store data: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error storing data:", error);
+            alert("Failed to store data. Try again!");
+        });
+    });
+    loadPendingData();
+});
+
+    </script>
+</body>
+</html>  

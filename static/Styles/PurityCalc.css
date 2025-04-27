@@ -1,0 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    position: relative;
+    width: 100%;
+}
+
+.header {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 2px solid #e1e4f2;
+    background-color: #1a1d42;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo span {
+    color: #00bcd4;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #fff;
+}
+
+.user-info img {
+    height: 30px;
+    border-radius: 50%;
+}
+
+.main {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 60px);
+    background-color: #f9f9fb;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 300px;
+    background-color: #1a1d42;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 2px solid #e1e4f2;
+    transition: .3s;
+}
+
+.sidebar.active {
+    width: 103px;
+    overflow: hidden;
+}
+
+.sidebar.active .sidebar--item {
+    display: none;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.sidebar--items a,
+.sidebar--bottom-items a {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar--items a:hover,
+.sidebar--bottom-items a:hover {
+    background-color: #0288d1;
+    color: #fff;
+}
+
+#active--link {
+    background-color: #00bcd4;
+    color: #fff;
+}
+
+.sidebar--bottom-items li:last-child a {
+    margin-bottom: 0;
+}
+
+.icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    font-size: 1.3rem;
+    color: #00bcd4;
+}
+
+.main-content {
+    padding: 20px;
+    margin-left: 300px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.active ~ .main-content {
+    margin-left: 103px;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .sidebar.active {
+        height: 0;
+        overflow: hidden;
+    }
+}
+.icon-1 {
+    color: #ff9800;
+}
+
+.icon-2 {
+    color: #9c27b0;
+}
+
+.icon-3 {
+    color: #03a9f4;
+}
+
+.icon-4 {
+    color: #e91e63;
+}
+
+.icon-5 {
+    color: #8bc34a;
+}
+
+.icon-7 {
+    color: #ff5722;
+}
+
+.icon-8 {
+    color: #ffc107;
+}
+
+
+table {
+    width: 100%; 
+    border-collapse: collapse;
+    margin: 20px 0; 
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 15px; 
+    text-align: center;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  th:nth-child(1) {
+    width: 30%; 
+  }
+
+  th:nth-child(2),
+  th:nth-child(3) {
+    width: 25%;
+  }
+
+  .calculate-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    background: linear-gradient(to right, #4caf50, #81c784); 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .calculate-button:hover {
+    background: linear-gradient(to right, #388e3c, #66bb6a);
+  }
+
+  .add-button-container {
+    margin-top: 20px; 
+    text-align: center; 
+  }
+
+  .add-button {
+    background-color: #ff9900; 
+    background-image: linear-gradient(to right, #ff9900, #ffbb33); 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .view-btn {
+    background-color: #ff9900; 
+    background-image: linear-gradient(to right, #ff9900, #ffbb33); 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .add-button:hover {
+    background-image: linear-gradient(to right, #ffbb33, #ff9900); 
+  }
+
+  .add-button-container {
+    margin-top: 20px;
+}
+
+.add-button, .save-button, .calculate-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-button {
+    background-color: #008CBA;
+    color: white;
+}
+
+.calculate-button {
+    background-color: #ff9800;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+#input-form {
+    margin-top: 20px;
+}
+
+#input-form input {
+    padding: 12px;
+    margin: 5px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.calculate-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3); 
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.calculate-btn:hover {
+    background: linear-gradient(135deg, #0056b3, #004099);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.calculate-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}

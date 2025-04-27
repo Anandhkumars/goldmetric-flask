@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Weekly Overview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/Weeklyover.css') }}">
+    <style>
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    
+        input[type="date"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    
+        #date-range {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <section class="header">
+        <div class="logo">
+            <i class="ri-menu-line icon icon-0 menu"></i>
+            <h2><span>GoldMetric</span></h2>
+        </div>
+        <div class="user-info">
+            <span id="current-time"></span>
+        </div>
+    </section>
+    <section class="main">
+        <div class="sidebar">
+            <ul class="sidebar--items">
+                <li><a href="{{ url_for('dashboard_page') }}"><span class="icon icon-1"><i class="ri-dashboard-fill"></i></span> Dashboard</a></li>
+                <li><a href="{{ url_for('purity_calc') }}"><span class="icon icon-2"><i class="ri-calendar-2-line"></i></span> Calculation</a></li>
+                <li><a href="{{ url_for('pending_payments') }}"><span class="icon icon-3"><i class="ri-user-2-line"></i></span> Pending Payment</a></li>
+                <li><a href="{{ url_for('customer_history') }}"><span class="icon icon-4"><i class="ri-user-line"></i></span> Customer</a></li>
+                <li><a href="{{ url_for('weekly_overview') }}" id="active--link"><span class="icon icon-5"><i class="ri-line-chart-line"></i></span> Weekly Overview</a></li>
+                <li><a href="{{ url_for('settings') }}"><span class="icon icon-7"><i class="ri-settings-3-line"></i></span> Settings</a></li>
+            </ul>
+            {% if session.username %}
+            <ul class="sidebar--bottom-items">
+                <li>
+                    <a href="{{ url_for('logout') }}">
+                        <span class="icon icon-8"><i class="ri-logout-box-r-line"></i></span>
+                        <span class="sidebar--item">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        {% else %}
+            <a href="{{ url_for('login_page') }}">Login</a>
+        {% endif %}
+        
+        </div>
+
+        <div id="Main" class="main-content">
+            <div class="container">
+                <h1>Weekly Overview</h1>
+                <label for="start-date">Select Week:</label>
+                <input type="date" id="start-date" onchange="fetchWeeklyData()">
+                <p id="date-range">Date Range: Loading...</p>
+
+                <div class="card-container">
+                    <div class="card revenue-card" onclick="showChart('revenueChart')">
+                        <h3>Total Revenue</h3>
+                        <p id="total-revenue">₹0</p>
+                    </div>
+                    <div class="card tests-card" onclick="showChart('testsChart')">
+                        <h3>Total Gold Tests</h3>
+                        <p id="total-tests">0</p>
+                    </div>
+                    <div class="card payments-card" onclick="showChart('paymentChart')">
+                        <h3>Payment Methods</h3>
+                        <p id="payment-methods">Loading...</p>
+                    </div>
+                </div>
+
+                <div id="revenueChart" class="chart-container"><canvas id="revenueCanvas"></canvas></div>
+                <div id="testsChart" class="chart-container"><canvas id="testsCanvas"></canvas></div>
+                <div id="paymentChart" class="chart-container"><canvas id="paymentCanvas"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .chart-container { display: none; }
+    </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchWeeklyData(); // Load default last 7 days
+    });
+
+    function fetchWeeklyData() {
+        let startDate = document.getElementById("start-date").value;
+        let url = `/weekly-data`;
+        if (startDate) {
+            url += `?start_date=${startDate}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                updateDashboard(data);
+                updateCharts(data);
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }
+
+    function updateDashboard(weeklyData) {
+        document.getElementById("date-range").innerText = `Date Range: ${weeklyData.dates[0]} - ${weeklyData.dates[weeklyData.dates.length - 1]}`;
+        document.getElementById("total-revenue").innerText = `₹${weeklyData.revenue.reduce((acc, val) => acc + val, 0).toLocaleString()}`;
+        document.getElementById("total-tests").innerText = weeklyData.tests.reduce((acc, val) => acc + val, 0);
+        document.getElementById("payment-methods").innerText = `Cash: ${weeklyData.totalCashCount} | Online: ${weeklyData.totalOnlineCount}`;
+    }
+
+    let chartInstances = {};
+
+    function getDayName(dateString) {
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return days[new Date(dateString).getDay()];
+    }
+
+    function updateCharts(weeklyData) {
+        const dayLabels = weeklyData.dates.map(getDayName); // Convert dates to day names
+
+        const chartConfigs = {
+            revenueChart: {
+                type: 'line',
+                data: {
+                    labels: dayLabels,
+                    datasets: [{
+                        label: 'Daily Revenue (₹)',
+                        data: weeklyData.revenue,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true
+                    }]
+                }
+            },
+            testsChart: {
+                type: 'bar',
+                data: {
+                    labels: dayLabels,
+                    datasets: [{
+                        label: 'Number of Gold Tests',
+                        data: weeklyData.tests,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            },
+            paymentChart: {
+                type: 'pie',
+                data: {
+                    labels: ['Cash Transactions', 'Online Transactions'],
+                    datasets: [{
+                        data: [weeklyData.totalCashCount, weeklyData.totalOnlineCount],
+                        backgroundColor: ['rgba(40, 167, 69, 0.7)', 'rgba(54, 162, 235, 0.7)'],
+                        borderColor: ['rgba(40, 167, 69, 1)', 'rgba(54, 162, 235, 1)'],
+                        borderWidth: 1
+                    }]
+                }
+            }
+        };
+
+        Object.keys(chartConfigs).forEach(chartId => {
+            const ctx = document.getElementById(chartId).querySelector("canvas").getContext("2d");
+
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].data = chartConfigs[chartId].data;
+                chartInstances[chartId].update();
+            } else {
+                chartInstances[chartId] = new Chart(ctx, chartConfigs[chartId]);
+            }
+        });
+    }
+
+    function showChart(id) {
+        document.querySelectorAll('.chart-container').forEach(chart => chart.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+</script>
+
+    <script src="{{ url_for('static', filename='Scripts/settings.js') }}"></script>
+</body>
+</html>

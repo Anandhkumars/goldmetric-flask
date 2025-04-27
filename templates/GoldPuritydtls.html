@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Purity Management</title>
+    <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background: linear-gradient(to right, #ffa726, #fb8c00);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(to right, #fb8c00, #ef6c00);
+    }
+
+.info {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    text-align: center;
+}
+
+.info p {
+    font-size: 16px;
+    margin: 8px 0;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.info span {
+    font-weight: 600;
+    color: #333;
+}
+
+
+.buttons {
+    display: flex;
+    justify-content: space-between; 
+    margin-top: 20px;
+    gap: 10px;
+}
+
+button {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;  
+}
+
+.download-btn { background: #ff4d4d; color: white; }
+.download-btn:hover { background: #cc0000; }
+
+.ok-btn { background: #06d6a0; color: white; }
+.ok-btn:hover { background: #048c70; }
+
+#askPayment { background: #118ab2; color: white; }
+#askPayment:hover { background: #0a6b8e; }
+
+#confirmPayment { background: #ffd166; color: #333; }
+#confirmPayment:hover { background: #e6b800; }
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.payment-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.payment-modal-content {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.payment-btn {
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    width: 200px;
+    margin: 10px 0;
+}
+
+#onlineBtn {
+    background: #2f9dff; 
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#onlineBtn:hover {
+    background: #1c7cc0; 
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+#onlineBtn:active {
+    background: #1a6ca0; 
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#cashBtn {
+    background: #ffbf47; 
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#cashBtn:hover {
+    background: #ff9f1a; 
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+#cashBtn:active {
+    background: #e68900; 
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.payment-btn:disabled {
+    background: #ddd;
+    color: #aaa; 
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="goBack()">&#x2B05; Back</button>
+
+    <div class="container">
+        <div class="info">
+            <p>ID: <span id="id">N/A</span></p>
+            <p>Name: <span id="name">N/A</span></p>
+            <p>Mobile: <span id="mobile">N/A</span></p>
+            <p>Party Gold: <span id="partyGold">N/A</span></p>
+            <p>Pure Weight: <span id="pureWeight">N/A</span></p>
+            <p>Remaining Gold: <span id="remainingGold">N/A</span></p>
+            <p>Fineness Percentage: <span id="finenessPercentage">N/A</span></p>
+            <p>Fineness Karat: <span id="finenessKarat">N/A</span></p>
+        </div>
+    
+        <div class="buttons">
+            <button id="generateBill" class="download-btn" onclick="generateBill()">Generate Bill</button>
+            <button class="ok-btn" onclick="handleOK()">OK</button>
+            <button id="askPayment" onclick="askPayment()">Ask Payment</button>
+        </div>
+
+        <div id="paymentModal" class="payment-modal" style="display: none;">
+            <div class="payment-modal-content">
+                <h2>Select Payment Method</h2>
+                <button class="payment-btn" id="onlineBtn" onclick="selectPayment('Online')">Online</button>
+                <button class="payment-btn" id="cashBtn" onclick="selectPayment('Cash')">Cash</button>
+            </div>
+        
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let data = localStorage.getItem("goldPurityData");
+
+    if (data) {
+        data = JSON.parse(data);
+        console.log("Fetched Data:", data);
+
+        document.getElementById("id").textContent = data.user_id || "N/A";
+        document.getElementById("name").textContent = data.name || "N/A";
+        document.getElementById("mobile").textContent = data.mobile || "N/A";
+        document.getElementById("partyGold").textContent = data.party_gold ? data.party_gold + " g" : "N/A";
+        document.getElementById("pureWeight").textContent = data.pure_weight ? data.pure_weight + " g" : "N/A";
+        document.getElementById("remainingGold").textContent = data.remaining_gold ? data.remaining_gold + " g" : "N/A";
+        document.getElementById("finenessPercentage").textContent = data.fineness_percentage ? data.fineness_percentage + "%" : "N/A";
+        document.getElementById("finenessKarat").textContent = data.fineness_karat ? data.fineness_karat + " Karat" : "N/A";
+        const id = data.user_id;
+        document.getElementById("generateBill").setAttribute("data-id", id);
+    } else {
+        alert("No data found! Please calculate again.");
+    }
+});
+
+document.getElementById("generateBill").addEventListener("click", function () {
+    const id = this.getAttribute("data-id");
+
+    if (!id) {
+        alert("User ID missing.");
+        return;
+    }
+
+    fetch(`/generate_bill/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch PDF.");
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `bill_${id}.pdf`; 
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            alert("Bill downloaded successfully.");
+
+            button.disabled = true;
+        })
+        .catch(error => {
+            console.error("Download error:", error);
+           // alert("Something went wrong. Please try again.\n" + error.message);
+        });
+});
+
+async function handleOK() {
+    let name = document.getElementById("name").textContent.trim();
+    let mobile = document.getElementById("mobile").textContent.trim();
+    let okButton = document.querySelector(".ok-btn");
+    let askPaymentButton = document.getElementById("askPayment");
+
+    if (!name || !mobile || name === "N/A" || mobile === "N/A") {
+        alert("Invalid Name or Mobile Number!");
+        return;
+    }
+
+    okButton.disabled = true;
+
+    try {
+        let response = await fetch("http://127.0.0.1:5000/update_status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, mobile: mobile, status: "Completed" })
+        });
+
+        let data = await response.json();
+
+        if (data.success) {
+            alert(`Status updated to Completed! (ID: ${data.id})`);
+            askPaymentButton.disabled = false;
+        } else {
+            alert("Failed to update status: " + data.message);
+            okButton.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error updating status:", error);
+        alert("Error updating status! Please try again.");
+        okButton.disabled = false;
+    }
+}
+async function askPayment() {
+    let name = document.getElementById("name").textContent.trim();
+    let mobile = document.getElementById("mobile").textContent.trim();
+    let askPaymentButton = document.getElementById("askPayment");
+
+    if (!name || !mobile) {
+        alert("Invalid Name or Mobile Number!");
+        return;
+    }
+    document.getElementById("paymentModal").style.display = "flex";
+    askPaymentButton.disabled = true;  
+}
+
+async function selectPayment(paymentMethod) {
+    let name = document.getElementById("name").textContent.trim();
+    let mobile = document.getElementById("mobile").textContent.trim();
+    document.getElementById("paymentModal").style.display = "none";
+    try {
+        let response = await fetch("http://127.0.0.1:5000/update_payment_method", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, mobile: mobile, method: paymentMethod })
+        });
+
+        let data = await response.json();
+
+        if (data.success) {
+            //alert(paymentMethod + " payment method selected!");
+            alert("Payment method selected!...");
+        } else {
+            alert("Error updating payment: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Network error while updating payment method!");
+    }
+}
+
+function goBack() {
+    window.location.href = '/purity_calc';
+
+    window.onload = function() {
+        setTimeout(function() {
+            location.reload(true);
+        }, 100);  
+    }
+}
+
+
+</script>
+</body>
+</html>

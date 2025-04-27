@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    position: relative;
+    width: 100%;
+}
+
+.header {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 2px solid #e1e4f2;
+    background-color: #1a1d42;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    color: #00bcd4;
+}
+
+.logo span {
+    color: #00bcd4;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #fff;
+}
+
+.user-info img {
+    height: 30px;
+    border-radius: 50%;
+}
+
+.main {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 60px);
+    background-color: #f9f9fb;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 300px;
+    background-color: #1a1d42;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 2px solid #e1e4f2;
+    transition: .3s;
+}
+
+.sidebar.active {
+    width: 103px;
+    overflow: hidden;
+}
+
+.sidebar.active .sidebar--item {
+    display: none;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.sidebar--items a,
+.sidebar--bottom-items a {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar--items a:hover,
+.sidebar--bottom-items a:hover {
+    background-color: #0288d1;
+    color: #fff;
+}
+
+#active--link {
+    background-color: #00bcd4;
+    color: #fff;
+}
+
+.sidebar--bottom-items li:last-child a {
+    margin-bottom: 0;
+}
+
+.icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    font-size: 1.3rem;
+    color: #00bcd4;
+}
+
+.main-content {
+    padding: 20px;
+    margin-left: 300px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.active ~ .main-content {
+    margin-left: 103px;
+}
+
+.container {
+    padding: 20px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .sidebar.active {
+        height: 0;
+        overflow: hidden;
+    }
+}
+.icon-1 {
+    color: #ff9800;
+}
+
+.icon-2 {
+    color: #9c27b0;
+}
+
+.icon-3 {
+    color: #03a9f4;
+}
+
+.icon-4 {
+    color: #e91e63;
+}
+
+.icon-5 {
+    color: #8bc34a;
+}
+
+.icon-7 {
+    color: #ff5722;
+}
+
+.icon-8 {
+    color: #ffc107;
+}
+
+h1 {
+    text-align: center;
+    color: #343a40;
+    margin-bottom: 30px;
+}
+
+.setting-option {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.setting-option label {
+    font-size: 16px;
+}
+
+.setting-option input[type="text"],
+.setting-option input[type="email"],
+.setting-option input[type="password"],
+.setting-option input[type="number"],
+.setting-option input[type="tel"],
+.setting-option select {
+    padding: 8px;
+    width: 40%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.theme-options {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-option {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.theme-option.light {
+    background-color: #f0f0f0;
+}
+
+.theme-option.dark {
+    background-color: #333;
+}
+
+.theme-option.blue {
+    background-color: #007bff;
+}
+
+.confirmation-message,
+.error-message {
+    margin-top: 20px;
+    text-align: center;
+    display: none;
+}
+
+.confirmation-message {
+    color: green;
+}
+
+.error-message {
+    color: red;
+}

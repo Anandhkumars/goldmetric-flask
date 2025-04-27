@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/Dashboard.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <section class="header">
+    <div class="logo-container">
+        <i class="ri-menu-line icon" id="menu-toggle"></i>
+        <h2><span>GoldMetric</span></h2>
+    </div>
+    <div class="user-info">
+        <span id="current-time"></span>
+    </div>
+</section>
+<section class="main">
+    <div class="sidebar">
+        <ul class="sidebar--items">
+            <li>
+                <a href="{{ url_for('dashboard_page') }}" id="active--link">
+                    <span class="icon icon-1"><i class="ri-dashboard-fill"></i></span>
+                    <span class="sidebar--item">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('purity_calc') }}">
+                    <span class="icon icon-2"><i class="ri-calendar-2-line"></i></span>
+                    <span class="sidebar--item">Calculation</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('pending_payments') }}">
+                    <span class="icon icon-3"><i class="ri-user-2-line"></i></span>
+                    <span class="sidebar--item" style="white-space: nowrap;">Pending Payment</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customer_history') }}">
+                    <span class="icon icon-4"><i class="ri-user-line"></i></span>
+                    <span class="sidebar--item">Customer</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('weekly_overview') }}">
+                    <span class="icon icon-5"><i class="ri-line-chart-line"></i></span>
+                    <span class="sidebar--item">Weekly Overview</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('settings') }}">
+                    <span class="icon icon-7"><i class="ri-settings-3-line"></i></span>
+                    <span class="sidebar--item">Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        {% if session.username %}
+    <ul class="sidebar--bottom-items">
+        <li>
+            <a href="{{ url_for('logout') }}">
+                <span class="icon icon-8"><i class="ri-logout-box-r-line"></i></span>
+                <span class="sidebar--item">Logout</span>
+            </a>
+        </li>
+    </ul>
+{% else %}
+    <a href="{{ url_for('login_page') }}">Login</a>
+{% endif %}
+
+        
+    </div>
+        <div id="Main" class="main-content">
+       <div class="content-container">
+            <div class="chart-and-rate">
+                <div class="left-side">
+                    <canvas id="goldFluctuationChart"></canvas>
+                </div>
+                <div class="right-side">
+                    <div class="gold-rate-card">
+                        <h2 id="gold-rate">Today's Gold Rate<br></h2>
+                        <p id="gold-rate-value">Loading...</p>
+                    </div>
+                </div>
+            </div>
+    <div class="pending-orders">
+        <h3>Pending Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bill Number</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pending-orders-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='Scripts/Dashboard.js') }}"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        async function fetchGoldRate() {
+    try {
+        let response = await fetch("http://127.0.0.1:5000/api/goldrate"); 
+        let data = await response.json();
+
+        if (data.rate !== undefined) {
+            document.getElementById("gold-rate-value").textContent = `₹ ${data.rate} per gram`;
+        } else {
+            document.getElementById("gold-rate-value").textContent = "Error: Invalid API Data";
+            console.error("Invalid API Response:", data);
+        }
+    } catch (error) {
+        console.error("Error fetching gold rate:", error);
+        document.getElementById("gold-rate-value").textContent = "Error loading rate";
+    }
+}
+fetchGoldRate(); 
+
+    async function fetchGoldFluctuation() {
+    try {
+        let response = await fetch("http://127.0.0.1:5000/api/gold_fluctuation");
+        let data = await response.json();
+
+        console.log("API Response:", data);
+
+        if (data.error) {
+            console.error("Error fetching fluctuation data:", data.error);
+            return;
+        }
+
+        updateChart(data.days, data.prices);
+
+    } catch (error) {
+        console.error("Error fetching gold fluctuation data:", error);
+    }
+}
+
+function updateChart(days, fluctuationData) {
+    console.log("Updating chart with data:", days, fluctuationData);
+
+    const chartCanvas = document.getElementById('goldFluctuationChart');
+
+    if (!chartCanvas) {
+        console.error("Chart canvas element not found!");
+        return;
+    }
+
+    const ctx = chartCanvas.getContext('2d');
+
+    if (window.goldFluctuationChart && typeof window.goldFluctuationChart.destroy === 'function') {
+        window.goldFluctuationChart.destroy();
+    }
+
+    if (!days.length || !fluctuationData.length) {
+        console.error("No data available for chart!");
+        return;
+    }
+
+    window.goldFluctuationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: days,
+            datasets: [{
+                label: 'Gold Price (₹/gram)',
+                data: fluctuationData,
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                lineTension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: Math.min(...fluctuationData) - 50,
+                    max: Math.max(...fluctuationData) + 50,
+                    ticks: {
+                        callback: function (value) {
+                            return '₹' + value;
+                        }
+                    },
+                    title: { display: true, text: 'Price in ₹' }
+                },
+                x: {
+                    title: { display: true, text: 'Days of the Week' }
+                }
+            }
+        }
+    });
+}
+
+fetchGoldFluctuation();
+
+
+});
+
+    </script>
+
+<script>
+    async function fetchPendingOrders() {
+    try {
+        let response = await fetch("http://127.0.0.1:5000/get_pending_orders"); 
+        let data = await response.json();
+
+        let tableBody = document.getElementById("pending-orders-body"); 
+        tableBody.innerHTML = "";
+
+        data.orders.forEach(order => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${order.bill_number}</td>
+                <td>${order.name}</td>
+                <td style="display: none;">${order.mobile}</td>  <!-- Hidden Mobile -->
+                <td>
+                    <button class="calculate-btn" data-bill="${order.bill_number}" data-mobile="${order.mobile}">
+                        Calculate (Bill: ${order.bill_number})
+                    </button>
+                </td>
+            `;
+
+            let button = row.querySelector(".calculate-btn");
+            button.addEventListener("click", function() {
+                let bill = this.getAttribute("data-bill");
+                let mobile = this.getAttribute("data-mobile");
+                window.location.href = `/calculate_purity_page?bill=${bill}&mobile=${mobile}`;
+            });
+
+            tableBody.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error fetching pending orders:", error);
+    }
+}
+
+fetchPendingOrders();
+
+</script>
+
+</body>
+</html>

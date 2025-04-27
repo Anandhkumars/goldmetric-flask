@@ -1,0 +1,9 @@
+flask
+flask-cors
+requests
+apscheduler
+fpdf
+pywhatkit
+bcrypt
+PyJWT
+pywebview

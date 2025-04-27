@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap");
+
+      :root {
+        --primary-color: #8263a3;
+        --text-dark: #232637;
+        --white: #ffffff;
+        --max-width: 1350px;
+      }
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      .btn {
+        position: absolute;
+        padding: 1rem 2rem;
+        outline: none;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      a {
+        text-decoration: none;
+        transition: 0.3s;
+      }
+
+      body {
+        font-family: "Noto Sans JP", sans-serif;
+        background-color: #dbdce0;
+      }
+
+      body::after {
+        position: fixed;
+        content: "";
+        height: 100%;
+        width: 0;
+        top: 0;
+        right: 0;
+        background-color: var(--text-dark);
+        z-index: -1;
+
+        animation: body-bg 1s ease-in-out forwards;
+      }
+
+      @keyframes body-bg {
+        0% {
+          width: 0vw;
+        }
+        100% {
+          width: 50vw;
+        }
+      }
+
+      body::before {
+        position: fixed;
+        content: "0";
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+        font-size: 70rem;
+        font-weight: 200;
+        color: var(--white);
+        z-index: -1;
+        opacity: 0.5;
+      }
+
+      .container {
+        position: relative;
+        isolation: isolate;
+        min-height: 100vh;
+        max-width: var(--max-width);
+        margin-inline: auto;
+        overflow: hidden;
+      }
+
+      nav {
+        padding-block: 2rem 0;
+        padding-inline: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .nav__links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .nav__links a {
+        font-weight: 500;
+      }
+
+      .nav__links .logo {
+        font-size: 1.2rem;
+        font-weight: 800;
+      }
+
+      .nav__left a {
+        color: var(--text-dark);
+      }
+
+      .nav__right a {
+        color: var(--white);
+      }
+
+      .nav__links a:hover {
+        color: var(--primary-color);
+      }
+
+      .letter-s {
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5rem;
+        font-weight: 900;
+        color: var(--primary-color);
+        text-align: center;
+        max-width: 80%;
+        z-index: 2;
+      }
+
+      .welcome-message h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--white);
+      }
+
+      .welcome-message p {
+        font-size: 1.5rem;
+        color: var(--white);
+        margin-top: 0;
+      }
+
+      .container img {
+        position: absolute;
+        width: 100%;
+        max-width: 200px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0 0 50px rgba(0, 0, 0, 0.8));
+        z-index: 1;
+      }
+
+      .nav-logo-img {
+        width: 50px;
+        height: auto;
+        position: relative;
+        z-index: 10;
+      }
+
+      .container h4 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 5rem;
+        color: var(--white);
+        letter-spacing: 25px;
+      }
+
+      .text__left {
+        transform: translate(calc(-50% - 250px), -50%);
+      }
+
+      .text__right {
+        transform: translate(calc(-50% + 350px), -50%);
+      }
+
+      .container .explore {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, calc(-50% + 225px));
+        color: var(--text-dark);
+        background-color: var(--white);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+      }
+
+      .footer {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        padding-inline: 1rem;
+        bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .footer p {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+      }
+
+      .footer__links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+      }
+
+      .footer__links li {
+        opacity: 0;
+        animation: fade__in 0.3s ease-in-out forwards;
+      }
+
+      .footer__links li:nth-child(1) {
+        animation-delay: 6s;
+      }
+      .footer__links li:nth-child(2) {
+        animation-delay: 6.5s;
+      }
+      .footer__links li:nth-child(3) {
+        animation-delay: 7s;
+      }
+
+      @keyframes fade__in {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .footer__links a {
+        color: var(--white);
+      }
+
+      .footer__links a:hover {
+        color: var(--primary-color);
+      }
+
+      .aa {
+        padding: 1rem 2.5rem;
+        background: linear-gradient(135deg, #8263a3, #674a99);
+        color: var(--white);
+        font-weight: 600;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        letter-spacing: 1px;
+        margin-left: 30px;
+      }
+
+      .aa:hover {
+        background: linear-gradient(135deg, #674a99, #8263a3);
+        transform: scale(1.05) translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      }
+
+      .aa:focus {
+        outline: none;
+        box-shadow: 0 0 10px 2px #674a99;
+      }
+
+      .aa:active {
+        transform: scale(1) translateY(2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .aa a {
+        color: var(--white);
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: color 0.3s ease;
+      }
+
+      .aa:hover a {
+        color: #fff;
+      }
+    </style>
+    <title>HOME</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <ul class="nav__links nav__left">
+          <li>
+            <!-- <img id="aaa" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="nav-logo-img" /> -->
+            <a href="#" class="logo">GOLD METRIC</a>
+          </li>
+        </ul>
+      </nav>
+      <span class="letter-s">
+        <div class="welcome-message">
+          <h1>Welcome to Gold Metric, Admin!</h1>
+        </div>
+      </span>
+
+      <img src="{{ url_for('static', filename='images/jewellery.png') }}" alt="header" />
+      <h4 class="text__left">GOLD</h4>
+      <h4 class="text__right">METRIC</h4>
+      <a href="{{ url_for('login_page') }}" class="btn explore">LOGIN</a>
+
+
+      <footer class="footer">
+        <p>Copyright © 2025 GOLDMETRIC. All rights reserved.</p>
+      </footer>
+    </div>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+      const scrollRevealOption = {
+        distance: "50px",
+        origin: "bottom",
+        duration: 1000,
+      };
+
+      ScrollReveal().reveal(".container .letter-s", {
+        duration: 1000,
+        delay: 1000,
+      });
+      ScrollReveal().reveal(".container img", {
+        duration: 1000,
+        delay: 1500,
+      });
+      ScrollReveal().reveal(".container .text__left", {
+        ...scrollRevealOption,
+        origin: "right",
+        delay: 2000,
+      });
+      ScrollReveal().reveal(".container .text__right", {
+        ...scrollRevealOption,
+        origin: "left",
+        delay: 2000,
+      });
+      ScrollReveal().reveal(".container .explore", {
+        duration: 1000,
+        delay: 2500,
+      });
+      ScrollReveal().reveal(".footer p", {
+        duration: 1000,
+        delay: 3500,
+      });
+    </script>
+  </body>
+</html>
